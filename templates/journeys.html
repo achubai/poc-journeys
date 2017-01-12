@@ -1,0 +1,245 @@
+<script type="text/ng-template" id="journeys.html">
+    <h2 class="b-submodule-title">Journeys</h2>
+
+    <div class="diagram-frame card" style="display: block; text-align: center;">
+        <img src="assets/mxClient/images/graph.png" alt="">
+    </div>
+    <div class="b-journeys-filters">
+        <label class="control-label font-weight-bold">Filters</label>
+        <div class="row">
+            <div class="col-md-6">
+                <label class="control-label font-weight-bold">Attribute(s)</label>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <select class="form-control" ng-model="vm.filters.filter2.key" >
+                                <option value="specialty" ng-selected="true">HCP Specialty</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-5">
+                            <select class="form-control" ng-model="vm.filters.filter2.value" >
+                                <option value="cardiologist" ng-selected="true" >Cardiologist</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <select class="form-control" ng-model="vm.filters.filter3.key" >
+                                <option value="segmentation" ng-selected="true">HCP Segmentation</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-5">
+                            <select class="form-control" ng-model="vm.filters.filter3.value" >
+                                <option value="Decile" ng-selected="true">Decile</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="vm.addedFilter >= 1">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <select class="form-control" ng-model="vm.filters.filter1.key" >
+                                <option value="journey-state" ng-selected="true">Select Journey State</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-5">
+                            <select class="form-control" ng-model="vm.filters.filter1.value" ng-change="vm.changeDiagram(true)" >
+                                <option value="All" ng-selected="true">All</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Ongoing">Ongoing</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="form-group" ng-if="vm.addedFilter >= 2">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <select class="form-control" ng-model="vm.filters.filter4.key" >
+                                <option value="segmentation" ng-selected="true">Age</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-5">
+                            <select class="form-control" ng-model="vm.filters.filter4.value" ng-change="vm.changeDiagram(true)">
+                                <option value="all" ng-selected="true">All</option>
+                                <option value="35">&lt; 35</option>
+                                <option value="35-50">35 &lt;= Age &lt; 50</option>
+                                <option value="50">&gt;= 50</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group"  ng-if="vm.addedFilter < 2">
+                    <button type="button" ng-click="vm.addedFilter = vm.addedFilter + 1" class="btn btn-primary">
+                        <span class="icon icon-plus"></span>
+                        Add Filter
+                    </button>
+                </div>
+
+            </div>
+            <div class="col-md-6">
+                <label class="control-label font-weight-bold">Outcome</label>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <label class="control-label">Actual Outcomes</label>
+                        </div>
+                        <div class="col-xs-6">
+                            <select class="form-control" ng-model="vm.filters.outcome2.value" ng-change="vm.changeDiagram()">
+                                <option value="" >Please choose</option>
+                                <option value="all" >Sales Low, Medium, High</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <label class="control-label">Predicted Outcomes</label>
+                        </div>
+                        <div class="col-xs-6">
+                            <select class="form-control" ng-model="vm.filters.outcome1.value" ng-change="vm.changeDiagram()">
+                                <option value="" >Please choose</option>
+                                <option value="all" >Sales Low, Medium, High</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="journeys-stats journey-details">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-style-list">
+                    <div class="card-header">
+                        <div class="card-title text-xs-center">Journeys</div>
+                    </div>
+                    <div class="card-block">
+
+                        <div class="row">
+                            <div class="col-xs-4 text-xs-center">
+                                <div class="journeys-stats-title">Active</div>
+                                <div class="journeys-stats-score text-primary ">{{vm.jDetailsObj.active}}</div>
+                            </div>
+                            <div class="col-xs-4 text-xs-center">
+                                <div class="journeys-stats-title">Complete</div>
+                                <div class="journeys-stats-score text-primary ">{{vm.jDetailsObj.complete}}</div>
+                            </div>
+                            <div class="col-xs-4 text-xs-center">
+                                <div class="journeys-stats-title">Success</div>
+                                <div class="journeys-stats-score" ng-class="{'text-success': vm.jDetailsObj.successState, 'text-danger': !vm.jDetailsObj.successState}">
+                                    {{vm.jDetailsObj.success}}%
+                                    <span class="icon" ng-class="{'icon-chevron-up': vm.jDetailsObj.successState, 'icon-chevron-down': !vm.jDetailsObj.successState}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card card-style-list">
+                    <div class="card-header">
+                        <div class="card-title text-xs-center">Emails</div>
+                    </div>
+                    <div class="card-block">
+
+                        <div class="row">
+                            <div class="col-xs-4 text-xs-center">
+                                <div class="journeys-stats-title">Opened</div>
+                                <div class="journeys-stats-score" ng-class="{'text-success': vm.jDetailsObj.openedState, 'text-warning': !vm.jDetailsObj.openedState}">
+                                    {{vm.jDetailsObj.opened}}%
+                                    <span class="icon" ng-class="{'icon-chevron-up': vm.jDetailsObj.openedState, 'icon-chevron-down': !vm.jDetailsObj.openedState}"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-4 text-xs-center">
+                                <div class="journeys-stats-title">Unsubscribed</div>
+                                <div class="journeys-stats-score" ng-class="{
+                                    'text-success': !vm.jDetailsObj.unsubscribedState,
+                                    'text-warning': vm.jDetailsObj.unsubscribedState}">
+                                    {{vm.jDetailsObj.unsubscribed}}%
+                                    <span class="icon" ng-class="{
+                                        'icon-chevron-up': vm.jDetailsObj.unsubscribedState,
+                                        'icon-chevron-down': !vm.jDetailsObj.unsubscribedState}"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-4 text-xs-center">
+                                <div class="journeys-stats-title">Bounced</div>
+                                <div class="journeys-stats-score" ng-class="{'text-success': !vm.jDetailsObj.bouncedState, 'text-warning': vm.jDetailsObj.bouncedState}">
+                                    {{vm.jDetailsObj.bounced}}%
+                                    <span class="icon" ng-class="{'icon-chevron-up': vm.jDetailsObj.bouncedState, 'icon-chevron-down': !vm.jDetailsObj.bouncedState}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <table ng-class="{'table-hover': !vm.showSpinner}" class="table table-base journeys-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Running Since</th>
+            <th>Description</th>
+            <th># of HCPs</th>
+            <th>Completed</th>
+            <th>Unsubscribed</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-if="vm.showSpinner">
+            <td colspan="7">
+                <div class="loading-indicator loading-center">
+                    <svg class="spinner-inner" viewbox="0 0 64 64">
+                        <circle class="spinner" r="25%" cx="50%" cy="50%"></circle>
+                    </svg>
+                    <svg class="spinner-outer" viewbox="0 0 64 64">
+                        <circle class="spinner" r="25%" cx="50%" cy="50%"></circle>
+                    </svg>
+                </div>
+            </td>
+        </tr>
+        <tr ng-repeat="journey in vm.journeys() | filter:vm.query track by $index" ng-if="!vm.showSpinner">
+            <td>
+                <div class="journey">
+                    <div class="journey-data">
+                        <a class="title" ng-bind="journey.name" ui-sref="journeys.item({id: journey.id})"></a>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <span ng-bind="journey.status"></span>
+            </td>
+            <td>
+                <span ng-bind="journey.createdDate | date : 'dd MMM yyyy' "></span>
+            </td>
+            <td>
+                <span ng-bind="journey.description"></span>
+            </td>
+            <td>
+                <span ng-bind="journey.numberOfHcp"></span>
+            </td>
+            <td>
+                <span ng-bind="journey.completed"></span>
+            </td>
+            <td>
+                <span ng-bind="journey.unsubscribed"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</script>

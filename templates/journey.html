@@ -1,0 +1,174 @@
+<script type="text/ng-template" id="journey.html">
+
+    <div class="clearfix journey-details hyphenate">
+
+        <button type="button" class="btn-secondary btn btn-sm float-xs-right" ui-sref="journeys">Back</button>
+        <h2 class="b-submodule-title">
+            Journey <span>{{vm.journey.name}}</span>
+
+            <div class="journey-details-title-desc">
+                Status: <span ng-bind="vm.journey.status" ng-class="{
+                'text-success': vm.journey.status == 'Published',
+                'text-danger': vm.journey.status == 'Stopped',
+                'text-warning': vm.journey.status == 'Draft'
+            }"></span>
+                /
+                Running since: <span ng-bind="vm.journey.createdDate | date"></span>
+            </div>
+        </h2>
+
+        <div class="journey-diagram">
+
+            <h2 >Journey Execution Summary</h2>
+
+            <svg id="the_svg" height="700" width="880" xmlns="http://www.w3.org/2000/svg" version="1.1" style="background-color: #ffffff"><g transform="translate(12,10)"><g><path class="link" d="M5,413.509376810243C73.41666666666667,413.509376810243 73.41666666666667,413.5761949847251 141.83333333333334,413.5761949847251" style="fill: none; stroke-width: 178; stroke: rgb(92, 5, 132); stroke-opacity: 0.4;"><title>Promotion E-mail → Interest Level
+                1,200</title></path><path class="link" d="M572.3333333333334,513.3230134391099C640.75,513.3230134391099 640.75,532.3765290132471 709.1666666666667,532.3765290132471" style="fill: none; stroke-width: 107.838; stroke: rgb(102, 0, 0); stroke-opacity: 0.4;"><title>E-mail Survey → Survey Response
+                727</title></path><path class="link" d="M430.5,494.4200263018181C498.9166666666667,494.4200263018181 498.9166666666667,513.3230134391099 567.3333333333334,513.3230134391099" style="fill: none; stroke-width: 107.838; stroke: rgb(175, 0, 0); stroke-opacity: 0.4;"><title>Wait 1 Days → E-mail Survey
+                727</title></path><path class="link" d="M288.6666666666667,507.5008519147237C357.08333333333337,507.5008519147237 357.08333333333337,494.4200263018181 425.5,494.4200263018181" style="fill: none; stroke-width: 107.838; stroke: rgb(247, 2, 2); stroke-opacity: 0.4;"><title>Not Interested → Wait 1 Days
+                727</title></path><path class="link" d="M146.83333333333334,448.65702831805845C215.25,448.65702831805845 215.25,507.5008519147237 283.6666666666667,507.5008519147237" style="fill: none; stroke-width: 107.838; stroke: rgb(247, 79, 79); stroke-opacity: 0.4;"><title>Interest Level → Not Interested
+                727</title></path><path class="link" d="M288.6666666666667,318.5008519147236C357.08333333333337,318.5008519147236 357.08333333333337,277.3229866102212 425.5,277.3229866102212" style="fill: none; stroke-width: 70.1617; stroke: rgb(113, 247, 153); stroke-opacity: 0.4;"><title>Interested → Wait 2 Days
+                473</title></path><path class="link" d="M430.5,277.3229866102212C498.9166666666667,277.3229866102212 498.9166666666667,236.03449555623527 567.3333333333334,236.03449555623527" style="fill: none; stroke-width: 70.1617; stroke: rgb(59, 249, 116); stroke-opacity: 0.4;"><title>Wait 2 Days → E-mail Contact Type
+                473</title></path><path class="link" d="M146.83333333333334,359.6570283180584C215.25,359.6570283180584 215.25,318.5008519147236 283.6666666666667,318.5008519147236" style="fill: none; stroke-width: 70.1617; stroke: rgb(157, 249, 185); stroke-opacity: 0.4;"><title>Interest Level → Interested
+                473</title></path><path class="link" d="M714.1666666666667,555.5906956799139C782.5833333333334,555.5906956799139 782.5833333333334,647.2950000000001 851,647.2950000000001" style="fill: none; stroke-width: 61.41; stroke: rgb(0, 0, 0); stroke-opacity: 0.4;"><title>Survey Response → Discard HCP
+                414</title></path><path class="link" d="M714.1666666666667,501.67152901324715C782.5833333333334,501.67152901324715 782.5833333333334,493.3758333333334 851,493.3758333333334" style="fill: none; stroke-width: 46.4283; stroke: rgb(51, 0, 0); stroke-opacity: 0.4;"><title>Survey Response → Thank you
+                313</title></path><path class="link" d="M572.3333333333334,217.19616222290193C711.6666666666667,217.19616222290193 711.6666666666667,16.24250000000007 851,16.24250000000007" style="fill: none; stroke-width: 32.485; stroke: rgb(0, 158, 47); stroke-opacity: 0.4;"><title>E-mail Contact Type → E-mail
+                219</title></path><path class="link" d="M572.3333333333334,255.9111622229019C711.6666666666667,255.9111622229019 711.6666666666667,254.95750000000004 851,254.95750000000004" style="fill: none; stroke-width: 24.7717; stroke: rgb(0, 158, 47); stroke-opacity: 0.4;"><title>E-mail Contact Type → Mail
+                167</title></path><path class="link" d="M572.3333333333334,238.48199555623526C711.6666666666667,238.48199555623526 711.6666666666667,137.5283333333334 851,137.5283333333334" style="fill: none; stroke-width: 10.0867; stroke: rgb(0, 255, 76); stroke-opacity: 0.4;"><title>E-mail Contact Type → Face-to- Face
+                68</title></path><path class="link" d="M714.1666666666667,297.7967997751645C782.5833333333334,297.7967997751645 782.5833333333334,368.75250000000005 851,368.75250000000005" style="fill: none; stroke-width: 2.81833; stroke: rgb(0, 0, 0); stroke-opacity: 0.4;"><title>No-Response → Send Reminder
+                19</title></path><path class="link" d="M572.3333333333334,269.706162222902C640.75,269.706162222902 640.75,297.7967997751645 709.1666666666667,297.7967997751645" style="fill: none; stroke-width: 2.81833; stroke: rgb(0, 0, 0); stroke-opacity: 0.4;"><title>E-mail Contact Type → No-Response
+                19</title></path></g><g><g class="node" transform="translate(0,324.509376810243)"><rect height="178" width="5" id="r0" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Promotion E-mail
+                1,200</title></rect><text x="11" y="89" dy=".35em" text-anchor="start" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Promotion E-mail: 1,200</text></g><g class="node" transform="translate(141.83333333333334,324.5761949847251)"><rect height="178" width="5" id="r1" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Interest Level
+                1,200</title></rect><text x="11" y="105" dy=".35em" text-anchor="start" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Interest Level: 1,200</text></g><g class="node" transform="translate(283.6666666666667,283.4200185813903)"><rect height="70.16166666666668" width="5" id="r2" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Interested
+                473</title></rect><text x="11" y="35.08083333333334" dy=".35em" text-anchor="start" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Interested: 473</text></g><g class="node" transform="translate(425.5,242.24215327688788)"><rect height="70.16166666666668" width="5" id="r3" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Wait 2 Days
+                473</title></rect><text x="-6" y="35.08083333333334" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Wait 2 Days: 473</text></g><g class="node" transform="translate(567.3333333333334,200.95366222290193)"><rect height="70.16166666666668" width="5" id="r4" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>E-mail Contact Type
+                473</title></rect><text x="-6" y="35.08083333333334" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">E-mail Contact Type: 473</text></g><g class="node" transform="translate(851,7.105427357601002e-14)"><rect height="32.485" width="5" id="r5" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>E-mail
+                219</title></rect><text x="-6" y="16.2425" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">E-mail: 219</text></g><g class="node" transform="translate(851,132.48500000000007)"><rect height="10.086666666666668" width="5" id="r6" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Face-to- Face
+                68</title></rect><text x="-6" y="5.043333333333334" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Face-to- Face: 68</text></g><g class="node" transform="translate(851,242.57166666666672)"><rect height="24.77166666666667" width="5" id="r7" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Mail
+                167</title></rect><text x="-6" y="12.385833333333334" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Mail: 167</text></g><g class="node" transform="translate(709.1666666666667,296.3876331084978)"><rect height="2.8183333333333334" width="5" id="r8" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>No-Response
+                19</title></rect><text x="-6" y="1.4091666666666667" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">No-Response: 19</text></g><g class="node" transform="translate(851,367.34333333333336)"><rect height="2.8183333333333334" width="5" id="r9" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Send Reminder
+                19</title></rect><text x="-6" y="1.4091666666666667" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Send Reminder: 19</text></g><g class="node" transform="translate(283.6666666666667,453.581685248057)"><rect height="107.83833333333334" width="5" id="r10" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Not Interested
+                727</title></rect><text x="11" y="53.91916666666667" dy=".35em" text-anchor="start" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Not Interested: 727</text></g><g class="node" transform="translate(425.5,440.5008596351514)"><rect height="107.83833333333334" width="5" id="r11" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Wait 1 Days
+                727</title></rect><text x="-6" y="53.91916666666667" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Wait 1 Days: 727</text></g><g class="node" transform="translate(567.3333333333334,459.4038467724432)"><rect height="107.83833333333334" width="5" id="r12" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>E-mail Survey
+                727</title></rect><text x="-6" y="53.91916666666667" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">E-mail Survey: 727</text></g><g class="node" transform="translate(709.1666666666667,478.4573623465805)"><rect height="107.83833333333334" width="5" id="r13" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Survey Response
+                727</title></rect><text x="-6" y="53.91916666666667" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Survey Response: 727</text></g><g class="node" transform="translate(851,470.16166666666675)"><rect height="46.428333333333335" width="5" id="r14" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Thank you
+                313</title></rect><text x="-6" y="23.214166666666667" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Thank you: 313</text></g><g class="node" transform="translate(851,616.59)"><rect height="61.410000000000004" width="5" id="r15" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Discard HCP
+                414</title></rect><text x="-6" y="30.705000000000002" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Discard HCP: 414</text></g></g></g></svg>
+
+
+
+        </div>
+        <div class="journey-diagram">
+            <graph journey="vm.journey"></graph>
+        </div>
+
+        <div class="row journey-row">
+            <div class="col-md-4">
+                <div class="card card-style-list">
+                    <div class="card-header card-header--small">
+                        <div class="card-title text-xs-center">Completion Rate</div>
+                    </div>
+                    <div class="card-block">
+                        <img src="assets/mxClient/images/diagram-completion-rate.png" alt="" class="img-fluid img-center">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-style-list">
+                    <div class="card-header card-header--small">
+                        <div class="card-title">Success Rate</div>
+                    </div>
+                    <div class="card-block card-block-digit">
+                        <div class="card-style-list-digit">
+                            <div class="card-style-list-digit-hold">
+                                23<small>%</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-style-list">
+                    <div class="card-header card-header--small">
+                        <div class="card-title">Email Interaction</div>
+                    </div>
+                    <div class="card-block">
+                        <img src="assets/mxClient/images/diagram-email-interaction.png" alt="" class="img-fluid img-center">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row ">
+            <div class="col-md-4">
+                <div class="card card-style-list">
+                    <div class="card-header">
+                        <div class="card-title">HCPs</div>
+                    </div>
+                    <div class="card-block">
+                        <ul class="journey-list">
+                            <li class="journey-list-item" ng-repeat="item in vm.journeyMembers track by $index">
+                                <a href ui-sref="main.dashboard.accounts.hcp({id: item.referenceId})" class="journey-list-title">{{item.firstName}} {{item.lastName}}</a>
+                                <div class="journey-list-desc">{{item.title}}</div>
+                            </li>
+                        </ul>
+                        <div class="" ng-if="!vm.journeyMembers">
+                            <div class="loading-indicator loading-center">
+                                <svg class="spinner-inner" viewbox="0 0 64 64">
+                                    <circle class="spinner" r="25%" cx="50%" cy="50%"></circle>
+                                </svg>
+                                <svg class="spinner-outer" viewbox="0 0 64 64">
+                                    <circle class="spinner" r="25%" cx="50%" cy="50%"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary" ui-sref="main.dashboard.journeys.item.addHcr({id: vm.id})" ng-disabled="!vm.journeyMembers">Add</button>
+                        <button class="btn btn-secondary" ng-disabled="!vm.journeyMembers">View All</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-style-list">
+                    <div class="card-header">
+                        <div class="card-title">Segment</div>
+                    </div>
+                    <div class="card-block">
+                        <div class="form-label">
+                            Deciles: 5-10
+                        </div>
+                        <div class="form-label">
+                            Sensitive to: Drug Safety
+                        </div>
+                        <div class="form-label">
+                            Product: Glidim
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-style-list">
+                    <div class="card-header">
+                        <div class="card-title">Marketing Summary</div>
+                    </div>
+                    <div class="card-block">
+                        {{vm.journey.description}}
+                        <div class="" ng-if="!vm.journey.showDescription">
+                            <div class="loading-indicator loading-center">
+                                <svg class="spinner-inner" viewbox="0 0 64 64">
+                                    <circle class="spinner" r="25%" cx="50%" cy="50%"></circle>
+                                </svg>
+                                <svg class="spinner-outer" viewbox="0 0 64 64">
+                                    <circle class="spinner" r="25%" cx="50%" cy="50%"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</script>

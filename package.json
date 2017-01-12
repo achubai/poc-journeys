@@ -1,0 +1,18 @@
+{
+  "name": "quintiles",
+  "version": "1.0.0",
+  "description": "AngularJS application for triange made for Salesforce",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-eslint": "^2.0.0",
+    "gulp-inject": "^4.0.0",
+    "gulp-watch": "^4.3.5"
+  }
+}

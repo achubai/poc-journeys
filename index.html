@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8"/>
+	<title>Journeys</title>
+    <link rel="stylesheet" href="http://cdn.ims.io/design/css/1.1.0/apollo.min.css"/>
+    <link rel="stylesheet" href="assets/css/main.css"/>
+</head>
+<body ng-app="journeys">
+
+<nav class="navbar navbar-jumbo navbar-primary navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-brand">
+            <a href="#0" class="navbar-brand-logo"><img src="assets/mxClient/images/logo-client.png" alt=""></a>
+        </div>
+
+
+        <ul class="navbar-links">
+
+            <li class="navbar-item active">
+                <a href="#">Dashboard{{window.mxClient_Path}}</a>
+            </li>
+
+        </ul>
+
+    </div>
+</nav>
+
+<div class="margin-top-navbar-jumbo">
+    <aside class="b-dashboard-navigation navbar navbar-vertical margin-top-navbar-jumbo">
+        <a class="navbar-vertical-link sidebar-link"
+           ng-repeat="item in [{
+                title: 'Journeys',
+                icon: 'icon-map',
+                route: 'journeys',
+                activeOn: 'journeys.*'
+            }]"
+           ui-sref-active="{active: item.activeOn}"
+           ui-sref="main.dashboard.{{item.route}}">
+            <span class="icon {{item.icon}}"></span>
+            <span class="navbar-vertical-link-title">{{item.title}}</span>
+        </a>
+    </aside>
+    <div class="margin-left-navbar-vertical" >
+        <ui-view></ui-view>
+    </div>
+</div>
+
+
+	<script src="libs/angular.min.js"></script>
+	<script src="libs/underscore-min.js"></script>
+	<script src="libs/angular-ui-router.min.js"></script>
+	<script src="libs/ui-bootstrap-tpls.min.js"></script>
+    <script type="text/javascript">mxBasePath = 'assets/mxClient';</script>
+    <script src="assets/mxClient/mxClient.min.js"></script>
+
+    <script src="tmp.repo.js"></script>
+<!-- inject:js -->
+<script src="app/app.js"></script>
+<script src="app/journeyCtrl.js"></script>
+<script src="app/journeysCtrl.js"></script>
+<script src="app/components/emailForm.js"></script>
+<script src="app/components/graph.js"></script>
+<script src="app/repositories/repository.js"></script>
+<script src="app/services/service.js"></script>
+<!-- endinject -->
+
+    <!-- inject:repositories:js -->
+    <script type="text/javascript">(function () {
+    'use strict';
+
+    var members = '[ {  "title" : "Physician",  "sfId" : "a040Y000001BnojQAC",  "referenceId" : "0030Y000008MirjQAC",  "mcJourneyId" : "51521fdf-da7c-4bce-9881-0b356b1ee16e",  "lastName" : "Cummings",  "firstName" : "Alexys",  "email" : "joshuah.jacobs@hotmail.com",  "dataExtensionId" : "b7dfb478-d1b6-e611-80cc-1402ec721edd",  "accountName" : "Western State Hospital"}, {  "title" : "Nurse",  "sfId" : "a040Y000001BnoUQAS",  "referenceId" : "0030Y000008MitAQAS",  "mcJourneyId" : "51521fdf-da7c-4bce-9881-0b356b1ee16e",  "lastName" : "Kuhlman",  "firstName" : "Al",  "email" : "philip.sipes@yahoo.com",  "dataExtensionId" : "b7dfb478-d1b6-e611-80cc-1402ec721edd",  "accountName" : "Northstar Hospital"}, {  "title" : "Nurse",  "sfId" : "a040Y000001BnLXQA0",  "referenceId" : "0030Y000008MixNQAS",  "mcJourneyId" : "51521fdf-da7c-4bce-9881-0b356b1ee16e",  "lastName" : "Langosh",  "firstName" : "Samson",  "email" : "efrain.ebert@gmail.com",  "dataExtensionId" : "b7dfb478-d1b6-e611-80cc-1402ec721edd",  "accountName" : "Hospital for Special Care"}, {  "title" : "Physician",  "sfId" : "a040Y000001BnokQAC",  "referenceId" : "0030Y000008Miw5QAC",  "mcJourneyId" : "51521fdf-da7c-4bce-9881-0b356b1ee16e",  "lastName" : "MacGyver",  "firstName" : "Alison",  "email" : "ibrahim.heathcote@gmail.com",  "dataExtensionId" : "b7dfb478-d1b6-e611-80cc-1402ec721edd",  "accountName" : "Albany Medical Center"}, {  "title" : "Physician",  "sfId" : "a040Y000001Bno5QAC",  "referenceId" : "0030Y000008MmAQQA0",  "mcJourneyId" : "51521fdf-da7c-4bce-9881-0b356b1ee16e",  "lastName" : "Walles",  "firstName" : "Miranda",  "email" : "nwalles@stomax.com",  "dataExtensionId" : "b7dfb478-d1b6-e611-80cc-1402ec721edd",  "accountName" : null} ]';
+
+    angular
+        .module('journeys.repositories')
+        .factory('journeysRepository', journeysRepository);
+
+    journeysRepository.$inject = ['$q'];
+
+    function journeysRepository ($q) {
+
+        function fetchJourneys () {
+            var deferred = $q.defer();
+
+            JourneysController.getJourneys(
+                function(result, event){
+                    //Success
+                    if (event.status) {
+                        //result is JSON str that represents list of all journeys
+                        deferred.resolve(JSON.parse(result));
+                        //Error
+                    } else {
+                        //event.message contains error msg
+                        deferred.reject(event.message);
+                    }
+                },
+                {escape: false}
+            );
+
+            return deferred.promise;
+        }
+
+        function fetchJourney (journeyId) {
+            var deferred = $q.defer();
+
+            JourneysController.getJourneyByMCId(
+                journeyId,
+                function(result, event){
+
+                    //Success
+                    if (event.status) {
+                        //result is JSON str that represents single journey
+                        deferred.resolve(JSON.parse(result));
+
+                        //Error
+                    } else {
+                        //event.message contains error msg
+                        deferred.reject(event.message);
+                    }
+                },
+                {escape: false}
+            );
+
+            return deferred.promise;
+        }
+
+        function fetchJourneysMembers () {
+            return $q.resolve(JSON.parse(members))
+        }
+
+        return {
+            fetchJourneys: fetchJourneys,
+            fetchJourney: fetchJourney,
+            fetchJourneysMembers: fetchJourneysMembers
+        }
+    }
+})();</script>
+    <!-- endinject -->
+
+<!-- inject:templates:html -->
+<script type="text/ng-template" id="emailForm.html">
+    <form name="$ctrl.form" ng-submit="$ctrl.submitHandler()" class="journey-add">
+        <div class="modal-header">
+            <h2 class="modal-title">eDetailing</h2>
+            <hr>
+        </div>
+        <div class="modal-body">
+            <iframe class="journey-email-template-iframe ng-scope" src="data:text/html,%3C!DOCTYPE%20HTML%20PUBLIC%20%22-%2F%2FW3C%2F%2FDTD%20HTML%204.01%20Transitional%2F%2FEN%22%20%22http%3A%2F%2Fwww.w3.org%2FTR%2Fhtml4%2Floose.dtd%22%3E%3Chtml%3E%3Chead%3E%3Cmeta%20name%3D%22viewport%22%20content%3D%22width%3Ddevice-width%2C%20initial-scale%3D1%2C%20maximum-scale%3D1%2C%20user-scalable%3D0%22%3E%3Cmeta%20http-equiv%3D%22Content-Type%22%20content%3D%22text%2Fhtml%3B%20charset%3DUTF-8%22%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%0D%0A%20%20%20%20%20%20%20%20%20%20ReadMsgBody%7B%20width%3A%20100%25%3B%7D%20%0D%0A%20%20%20%20%20%20%20%20%20%20.ExternalClass%20%7Bwidth%3A%20100%25%3B%7D%20%0D%0A%20%20%20%20%20%20%20%20%20%20.ExternalClass%2C%20.ExternalClass%20p%2C%20.ExternalClass%20span%2C%20.ExternalClass%20font%2C%20.ExternalClass%20td%2C%20.ExternalClass%20div%20%7Bline-height%3A%20100%25%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%20%7B-webkit-text-size-adjust%3A100%25%3B%20-ms-text-size-adjust%3A100%25%3Bmargin%3A0%20!important%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20p%20%7B%20margin%3A%201em%200%3B%7D%20%0D%0A%20%20%20%20%20%20%20%20%20%20table%20td%20%7B%20border-collapse%3A%20collapse%3B%7D%20%0D%0A%20%20%20%20%20%20%20%20%20%20img%20%7Boutline%3A0%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20a%20img%20%7Bborder%3Anone%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20p%20%7Bmargin%3A%201em%200%3B%7D%20%0D%0A%20%20%20%20%20%20%20%20%20%20%40-ms-viewport%7B%20width%3A%20device-width%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20%40media%20only%20screen%20and%20(max-width%3A%20480px)%20%7B%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.container%20%7B%20width%3A100%25%20!important%3B%20%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.footer%20%7B%20width%3Aauto%20!important%3B%20margin-left%3A0%3B%20%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.content-padding%7B%20padding%3A4px%20!important%3B%20%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.mobile-hidden%20%7B%20display%3Anone%20!important%3B%20%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.logo%20%7B%20display%3Ablock%20!important%3B%20padding%3A0%20!important%3B%20%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20img%20%7B%20max-width%3A100%25%20!important%3B%20height%3Aauto%20!important%3B%20max-height%3Aauto%20!important%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.header%20img%7Bmax-width%3A100%25%20!important%3Bheight%3Aauto%20!important%3B%20max-height%3Aauto%20!important%3B%20margin%3A%200%20auto%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.photo%20img%20%7B%20width%3A100%25%20!important%3B%20max-width%3A100%25%20!important%3B%20height%3Aauto%20!important%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.drop%20%7B%20display%3Ablock%20!important%3B%20width%3A%20100%25%20!important%3B%20float%3Aleft%3B%20clear%3Aboth%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.footerlogo%20%7B%20display%3Ablock%20!important%3B%20width%3A%20100%25%20!important%3B%20padding-top%3A15px%3B%20float%3Aleft%3B%20clear%3Aboth%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.nav4%2C%20body%5Byahoo%5D%20.nav5%2C%20body%5Byahoo%5D%20.nav6%20%7B%20display%3A%20none%20!important%3B%20%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.tableBlock%20%7Bwidth%3A100%25%20!important%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.responsive-td%20%7Bwidth%3A100%25%20!important%3B%20float%3Aleft%20!important%3B%20padding%3A0%20!important%3B%20%7D%0D%0A%20%20%20%20%20%20%20%20%20%20.fluid%2C%20.fluid-centered%20%7B%0D%0A%20%20%20%20%20%20%20%20%20%20width%3A%20100%25%20!important%3B%0D%0A%20%20%20%20%20%20%20%20%20%20max-width%3A%20100%25%20!important%3B%0D%0A%20%20%20%20%20%20%20%20%20%20height%3A%20auto%20!important%3B%0D%0A%20%20%20%20%20%20%20%20%20%20margin-left%3A%20auto%20!important%3B%0D%0A%20%20%20%20%20%20%20%20%20%20margin-right%3A%20auto%20!important%3B%0D%0A%20%20%20%20%20%20%20%20%20%20%7D%0D%0A%20%20%20%20%20%20%20%20%20%20.fluid-centered%20%7B%0D%0A%20%20%20%20%20%20%20%20%20%20margin-left%3A%20auto%20!important%3B%0D%0A%20%20%20%20%20%20%20%20%20%20margin-right%3A%20auto%20!important%3B%0D%0A%20%20%20%20%20%20%20%20%20%20%7D%0D%0A%20%20%20%20%20%20%20%20%20%20%2F*%20MOBILE%20GLOBAL%20STYLES%20-%20DO%20NOT%20CHANGE%20*%2F%0D%0A%20%20%20%20%20%20%20%20%20%20body%20%7B%20padding%3A%200px%20!important%3B%20font-size%3A%2016px%20!important%3B%20line-height%3A%20150%25%20!important%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20h1%20%7B%20font-size%3A%2022px%20!important%3B%20line-height%3A%20normal%20!important%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20h2%20%7B%20font-size%3A%2020px%20!important%3B%20line-height%3A%20normal%20!important%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20h3%20%7B%20font-size%3A%2018px%20!important%3B%20line-height%3A%20normal%20!important%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20.buttonstyles%20%7B%0D%0A%20%20%20%20%20%20%20%20%20%20font-family%3Aarial%2Chelvetica%2Csans-serif%20!important%3B%20%0D%0A%20%20%20%20%20%20%20%20%20%20font-size%3A%2016px%20!important%3B%20%0D%0A%20%20%20%20%20%20%20%20%20%20color%3A%20%23FFFFFF%20!important%3B%20%0D%0A%20%20%20%20%20%20%20%20%20%20padding%3A%2010px%20!important%3B%0D%0A%20%20%20%20%20%20%20%20%20%20%7D%0D%0A%20%20%20%20%20%20%20%20%20%20%7D%0D%0A%20%20%20%20%20%20%20%20%20%20%2F*%20END%20OF%20MOBILE%20GLOBAL%20STYLES%20-%20DO%20NOT%20CHANGE%20*%2F%20%20%20%0D%0A%20%20%20%20%20%20%20%20%20%20%40media%20only%20screen%20and%20(max-width%3A%20640px)%20%7B%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.container%20%7B%20width%3A100%25%20!important%3B%20%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.mobile-hidden%20%7B%20display%3Anone%20!important%3B%20%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.logo%20%7B%20display%3Ablock%20!important%3B%20padding%3A0%20!important%3B%20%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.photo%20img%20%7B%20width%3A100%25%20!important%3B%20height%3Aauto%20!important%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20body%5Byahoo%5D%20.nav5%2C%20body%5Byahoo%5D%20.nav6%20%7B%20display%3A%20none%20!important%3B%7D%0D%0A%20%20%20%20%20%20%20%20%20%20.fluid%2C%20.fluid-centered%20%7B%0D%0A%20%20%20%20%20%20%20%20%20%20width%3A%20100%25%20!important%3B%0D%0A%20%20%20%20%20%20%20%20%20%20max-width%3A%20100%25%20!important%3B%0D%0A%20%20%20%20%20%20%20%20%20%20height%3A%20auto%20!important%3B%0D%0A%20%20%20%20%20%20%20%20%20%20margin-left%3A%20auto%20!important%3B%0D%0A%20%20%20%20%20%20%20%20%20%20margin-right%3A%20auto%20!important%3B%0D%0A%20%20%20%20%20%20%20%20%20%20%7D%0D%0A%20%20%20%20%20%20%20%20%20%20.fluid-centered%20%7B%0D%0A%20%20%20%20%20%20%20%20%20%20margin-left%3A%20auto%20!important%3B%0D%0A%20%20%20%20%20%20%20%20%20%20margin-right%3A%20auto%20!important%3B%0D%0A%20%20%20%20%20%20%20%20%20%20%7D%0D%0A%20%20%20%20%20%20%20%20%20%20%7D%0D%0A%20%20%20%20%20%20%20%20%3C%2Fstyle%3E%3C%2Fhead%3E%3Cbody%20bgcolor%3D%22%23efefef%22%20text%3D%22%23808080%22%20style%3D%22background-color%3A%20%23efefef%3B%20color%3A%20%23808080%3B%20margin%3A%200px%3B%20padding%3A%2020px%3B%20-webkit-text-size-adjust%3Anone%3B%20line-height%3A%20normal%3B%20font-size%3A%2016px%3B%20font-family%3Aarial%2Chelvetica%2Csans-serif%3B%22%20yahoo%3D%22fix%22%3E%3Ctable%20width%3D%22100%25%22%20border%3D%220%22%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20align%3D%22center%22%3E%3Ctr%3E%3Ctd%20align%3D%22center%22%20valign%3D%22top%22%3E%3Cdiv%20style%3D%22margin%3A18px%200%3B%22%3E%3C!--%20%20%20To%20view%20this%20email%20as%20a%20web%20page%2C%20click%20on%20the%20link%20below%2C%20%20or%20copy%20and%20paste%20it%20into%20your%20browser's%20address%20window.%20%20javascript%3Avoid(0)%3B%20%20.%2F%2F--%3E%0D%0A%3Cfont%20face%3D%22verdana%22%20size%3D%221%22%20color%3D%22%23444444%22%3ETo%20view%20this%20email%20as%20a%20web%20page%2C%20go%20%3Ca%20href%3D%22javascript%3Avoid(0)%3B%22%20alias%3D%22View%20as%20a%20Web%20Page%22%3Ehere.%3C%2Fa%3E%3C%2Ffont%3E%3C%2Fdiv%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Ctd%20align%3D%22center%22%3E%3Ctable%20cellspacing%3D%220%22%20cellpadding%3D%220%22%20border%3D%220%22%20width%3D%22600%22%20class%3D%22container%22%20align%3D%22center%22%3E%3Ctr%3E%3Ctd%3E%3C!--%20added%20the%20border%20style%20here%20--%3E%3Ctable%20class%3D%22tb_properties%20border_style%22%20cellspacing%3D%220%22%20cellpadding%3D%220%22%20style%3D%22border-color%20%3A%20none%3B%20border-width%20%3A%200px%3B%20border-style%20%3A%20solid%3B%22%20bgcolor%3D%22%23ffffff%22%20width%3D%22100%25%22%3E%3C!--%20end%20of%20comment%20--%3E%3Ctr%3E%3Ctd%20align%3D%22center%22%20valign%3D%22top%22%3E%3Ctable%20align%3D%22left%22%20border%3D%220%22%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20width%3D%22100%25%22%3E%3Ctr%3E%3C!--%20added%20padding%20here%20--%3E%3Ctd%20class%3D%22content_padding%22%20style%3D%22padding%3A10px%3B%22%3E%3C!--%20end%20of%20comment%20--%3E%0D%0A%3Ctable%20border%3D%220%22%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20width%3D%22100%25%22%3E%3Ctr%3E%3Ctd%20align%3D%22left%22%20class%3D%22header%22%20valign%3D%22top%22%3E%3Ctable%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20width%3D%22100%25%22%20class%3D%22slot-styling%22%20style%3D%22border-bottom%3A%201px%20solid%20%23AEAEAE%3B%20padding-bottom%3A%2020px%3B%22%3E%3Ctbody%3E%3Ctr%3E%3Ctd%20class%3D%22camarker-inner%20slot-styling%22%3E%3Ctable%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20width%3D%22100%25%22%20class%3D%22stylingblock-content-wrapper%22%20style%3D%22padding-top%3A%2010px%3B%20%22%3E%3Ctr%3E%3Ctd%20class%3D%22camarker-inner%20stylingblock-content-wrapper%22%20align%3D%22center%22%3E%3Ctable%20width%3D%22100%25%22%20cellspacing%3D%220%22%20cellpadding%3D%220%22%3E%3Ctr%3E%3Ctd%20align%3D%22center%22%3E%3Cimg%20data-assetid%3D%22143%22%20src%3D%22http%3A%2F%2Fimage.S7.exacttarget.com%2Flib%2Ffe8713727c67027570%2Fm%2F1%2Ff83de337-ab3e-4b2e-a902-234e87eea8de.jpg%22%20height%3D%2236%22%20width%3D%22276%22%20style%3D%22height%3A36px%3Bwidth%3A276px%3Bdisplay%3A%20block%3Bpadding-top%3A%200px%3B%20padding-right%3A%200px%3B%20padding-bottom%3A%200px%3B%20padding-left%3A%200px%3B%20text-align%3A%20center%3B%22%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftbody%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%0D%0A%3Ctd%20align%3D%22left%22%20class%3D%22%22%20valign%3D%22top%22%3E%0D%0A%3Ctable%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20width%3D%22100%25%22%20class%3D%22slot-styling%22%20style%3D%22border-bottom%3A%201px%20solid%20%23AEAEAE%3B%20padding-top%3A%2010px%3B%20padding-bottom%3A%2010px%3B%22%3E%3Ctr%3E%3Ctd%20class%3D%22camarker-inner%20slot-styling%22%3E%3Ctable%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20width%3D%22100%25%22%20class%3D%22stylingblock-content-wrapper%22%20style%3D%22padding-top%3A%2010px%3B%20padding-right%3A%2010px%3B%20padding-left%3A%2010px%3B%20%22%3E%3Ctr%3E%3Ctd%20class%3D%22camarker-inner%20stylingblock-content-wrapper%22%3E%3Ctable%20cellspacing%3D%220%22%20cellpadding%3D%220%22%20style%3D%22width%3A%20100%25%3B%22%3E%3Ctr%3E%3Ctd%3E%3Ctable%20cellspacing%3D%220%22%20cellpadding%3D%220%22%20style%3D%22width%3A%20100%25%3B%22%3E%3Ctr%3E%3Ctd%20class%3D%22responsive-td%22%20valign%3D%22top%22%20style%3D%22width%3A%20100%25%3B%22%3E%3Ctable%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20width%3D%22100%25%22%20class%3D%22stylingblock-content-wrapper%22%20style%3D%22%3B%20%22%3E%3Ctr%3E%3Ctd%20class%3D%22camarker-inner%20stylingblock-content-wrapper%22%20align%3D%22left%22%3E%3Ctable%20width%3D%22100%25%22%20cellspacing%3D%220%22%20cellpadding%3D%220%22%3E%3Ctr%3E%3Ctd%3E%0D%0A%3Cimg%20data-assetid%3D%22142%22%20src%3D%22http%3A%2F%2Fimage.S7.exacttarget.com%2Flib%2Ffe8713727c67027570%2Fm%2F1%2Ff9404bb4-296d-4da4-95b8-94691c44203f.jpg%22%20height%3D%22auto%22%20width%3D%22100%25%22%20style%3D%22height%3Aauto%3Bwidth%3A100%25%3Bdisplay%3A%20block%3Bpadding-top%3A%200px%3B%20padding-right%3A%200px%3B%20padding-bottom%3A%200px%3B%20padding-left%3A%200px%3B%22%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3Ctable%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20width%3D%22100%25%22%20style%3D%22%3B%20%22%20class%3D%22stylingblock-content-wrapper%22%3E%3Ctr%3E%3Ctd%20class%3D%22camarker-inner%20stylingblock-content-wrapper%22%3E%3Ch1%20style%3D%22text-align%3A%20center%3B%20font-family%20%3A%20arial%2Chelvetica%2Csans-serif%3B%20font-size%20%3A%2028px%3B%20color%20%3A%20%23808080%3B%20line-height%20%3A%201%3B%20font-weight%20%3A%20bold%3B%20font-style%20%3A%20normal%3B%20%22%3E%3Cbr%3E%3Cspan%20style%3D%22color%3A%23FF0000%3B%22%3EWe'd%20Love%20to%20Tell%20You%20More!%3C%2Fspan%3E%3C%2Fh1%3E%3Cdiv%20style%3D%22text-align%3A%20center%3B%22%3EHow%20should%20we%20contact%20you%20to%20share%26nbsp%3Bmore%20information%20about%20GLIDIM%3F%3C%2Fdiv%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Ctd%20align%3D%22left%22%20class%3D%22%22%20valign%3D%22top%22%3E%0D%0A%3Ctable%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20width%3D%22100%25%22%20class%3D%22slot-styling%22%20style%3D%22border-bottom%3A%201px%20solid%20%23AEAEAE%3B%20padding-top%3A%2010px%3B%20padding-bottom%3A%2010px%3B%22%3E%3Ctbody%3E%3Ctr%3E%3Ctd%20class%3D%22camarker-inner%20slot-styling%22%3E%3Ctable%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20width%3D%22100%25%22%20class%3D%22stylingblock-content-wrapper%22%20style%3D%22%22%3E%3Ctr%3E%3Ctd%20class%3D%22stylingblock-content-wrapper%20camarker-inner%22%3E%3Ctable%20width%3D%22100%25%22%20border%3D%220%22%20cellspacing%3D%220%22%20cellpadding%3D%225%22%3E%3Ctr%3E%3Ctd%20align%3D%22center%22%3E%3Ctable%20border%3D%220%22%20cellspacing%3D%220%22%20cellpadding%3D%220%22%3E%3Ctr%3E%3Ctd%20class%3D%22innertd%20buttonstyles%22%20align%3D%22center%22%20bgcolor%3D%22%233F7FBF%22%20style%3D%22%20border-radius%3A%204px%3B%20-moz-border-radius%3A%204px%3B%20-webkit-border-radius%3A%204px%3B%22%3E%0D%0A%3Ca%20target%3D%22_blank%22%20style%3D%22%20text-decoration%3A%20none%3B%20display%3A%20block%3B%20background-color%3A%20%233F7FBF%3B%20border%3A%201px%20solid%20%235F7F9F%3B%20font-family%3A%20arial%2Chelvetica%2Csans-serif%3B%20font-size%3A%2016px%3B%20color%3A%20%23FFFFFF%3B%20border-radius%3A%204px%3B%20-moz-border-radius%3A%204px%3B%20-webkit-border-radius%3A%204px%3B%20padding-top%3A%2010px%3B%20padding-right%3A%2010px%3B%20padding-bottom%3A%2010px%3B%20padding-left%3A%2010px%3B%22%20class%3D%22buttonstyles%22%20href%3D%22inpersonvisit.poc%22%20title%3D%22%22%20alias%3D%22%22%20conversion%3D%22false%22%20data-linkto%3D%22Other%22%3EIn%20Person%20Visit%3C%2Fa%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3Ctable%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20width%3D%22100%25%22%20class%3D%22stylingblock-content-wrapper%22%20style%3D%22%22%3E%3Ctr%3E%3Ctd%20class%3D%22stylingblock-content-wrapper%20camarker-inner%22%3E%3Ctable%20width%3D%22100%25%22%20border%3D%220%22%20cellspacing%3D%220%22%20cellpadding%3D%225%22%3E%3Ctr%3E%3Ctd%20align%3D%22center%22%3E%3Ctable%20border%3D%220%22%20cellspacing%3D%220%22%20cellpadding%3D%220%22%3E%3Ctr%3E%3Ctd%20class%3D%22innertd%20buttonstyles%22%20align%3D%22center%22%20bgcolor%3D%22%233F7FBF%22%20style%3D%22%20border-radius%3A%203px%3B%20-moz-border-radius%3A%203px%3B%20-webkit-border-radius%3A%203px%3B%22%3E%0D%0A%3Ca%20target%3D%22_blank%22%20style%3D%22%20text-decoration%3A%20none%3B%20display%3A%20block%3B%20background-color%3A%20%233F7FBF%3B%20border%3A%201px%20solid%20%23507FAE%3B%20font-family%3A%20arial%2Chelvetica%2Csans-serif%3B%20font-size%3A%2016px%3B%20color%3A%20%23FFFFFF%3B%20border-radius%3A%203px%3B%20-moz-border-radius%3A%203px%3B%20-webkit-border-radius%3A%203px%3B%20padding-top%3A%2010px%3B%20padding-right%3A%2019px%3B%20padding-bottom%3A%2010px%3B%20padding-left%3A%2023px%3B%22%20class%3D%22buttonstyles%22%20href%3D%22phonecall.poc%22%20title%3D%22%22%20alias%3D%22%22%20conversion%3D%22false%22%20data-linkto%3D%22Other%22%3EPhone%20Call%3C%2Fa%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftbody%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Ctd%20align%3D%22left%22%20class%3D%22%22%20valign%3D%22top%22%3E%3Ctable%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20width%3D%22100%25%22%20class%3D%22slot-styling%22%20style%3D%22padding-top%3A%2020px%3B%22%3E%3Ctbody%3E%3Ctr%3E%0D%0A%3Ctd%20class%3D%22camarker-inner%20slot-styling%22%3E%3Ctable%20class%3D%22stylingblock-content-wrapper%22%20style%3D%22%3B%20%22%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20width%3D%22100%25%22%3E%3Ctr%3E%3Ctd%20class%3D%22camarker-inner%20stylingblock-content-wrapper%22%20align%3D%22left%22%3E%3Ctable%20class%3D%22socialshare-wrapper%22%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20width%3D%22100%25%22%3E%3Ctr%3E%3Ctd%3E%3Ctable%20align%3D%22center%22%20cellpadding%3D%220%22%20cellspacing%3D%220%22%3E%3Ctr%3E%3Ctd%20align%3D%22center%22%3E%3C!--%5Bif%20mso%5D%3E%3Ctable%20border%3D%220%22%20cellspacing%3D%220%22%20cellpadding%3D%220%22%3E%3Ctr%3E%3Ctd%20style%3D%22padding-right%3A10px%3B%22%3E%3C!%5Bendif%5D--%3E%3Ctable%20class%3D%22socialshare-innertable%22%20style%3D%22display%3A%20inline-block%22%3E%3Ctr%3E%3Ctd%20style%3D%22padding%3A5px%2010px%22%3E%3Ca%20href%3D%22%22%20alias%3D%22facebook%20follow%22%3E%0D%0A%3Cimg%20src%3D%22http%3A%2F%2Fimage.exct.net%2Flib%2Ffe5f15707267027a7712%2Fm%2F1%2Fsocialshare-facebook-grey-2x.png%22%20width%3D%2224%22%20height%3D%2224%22%20alt%3D%22Facebook%22%20style%3D%22display%3A%20block%3B%3B%20width%3A%2024px%20!important%3B%20height%3A%2024px%20!important%22%3E%3C%2Fa%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C!--%5Bif%20mso%5D%3E%3C%2Ftd%3E%3Ctd%20style%3D%22padding-right%3A10px%3B%22%3E%3C!%5Bendif%5D--%3E%3Ctable%20class%3D%22socialshare-innertable%22%20style%3D%22display%3A%20inline-block%22%3E%3Ctr%3E%3Ctd%20style%3D%22padding%3A5px%2010px%22%3E%3Ca%20href%3D%22%22%20alias%3D%22twitter%20follow%22%3E%3Cimg%20src%3D%22http%3A%2F%2Fimage.exct.net%2Flib%2Ffe5f15707267027a7712%2Fm%2F1%2Fsocialshare-twitter-grey-2x.png%22%20width%3D%2224%22%20height%3D%2224%22%20alt%3D%22Twitter%22%20style%3D%22display%3A%20block%3B%3B%20width%3A%2024px%20!important%3B%20height%3A%2024px%20!important%22%3E%3C%2Fa%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C!--%5Bif%20mso%5D%3E%3C%2Ftd%3E%3Ctd%20style%3D%22padding-right%3A10px%3B%22%3E%3C!%5Bendif%5D--%3E%3Ctable%20class%3D%22socialshare-innertable%22%20style%3D%22display%3A%20inline-block%22%3E%3Ctr%3E%0D%0A%3Ctd%20style%3D%22padding%3A5px%2010px%22%3E%3Ca%20href%3D%22%22%20alias%3D%22pinterest%20follow%22%3E%3Cimg%20src%3D%22http%3A%2F%2Fimage.exct.net%2Flib%2Ffe5f15707267027a7712%2Fm%2F1%2Fsocialshare-pinterest-grey-2x.png%22%20width%3D%2224%22%20height%3D%2224%22%20alt%3D%22Pinterest%22%20style%3D%22display%3A%20block%3B%3B%20width%3A%2024px%20!important%3B%20height%3A%2024px%20!important%22%3E%3C%2Fa%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C!--%5Bif%20mso%5D%3E%3C%2Ftd%3E%3Ctd%3E%3C!%5Bendif%5D--%3E%3Ctable%20class%3D%22socialshare-innertable%22%20style%3D%22display%3A%20inline-block%22%3E%3Ctr%3E%3Ctd%20style%3D%22padding%3A5px%2010px%22%3E%3Ca%20href%3D%22%22%20alias%3D%22instagram%20follow%22%3E%3Cimg%20src%3D%22http%3A%2F%2Fimage.exct.net%2Flib%2Ffe5f15707267027a7712%2Fm%2F1%2Fsocialshare-instagram-grey-2x.png%22%20width%3D%2224%22%20height%3D%2224%22%20alt%3D%22Instagram%22%20style%3D%22display%3A%20block%3B%3B%20width%3A%2024px%20!important%3B%20height%3A%2024px%20!important%22%3E%3C%2Fa%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C!--%5Bif%20mso%5D%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C!%5Bendif%5D--%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%0D%0A%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftbody%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3C%2Ftd%3E%3C%2Ftr%3E%3Ctr%3E%3Ctd%20valign%3D%22top%22%3E%3Ctable%20width%3D%22100%25%22%20cellspacing%3D%220%22%20cellpadding%3D%220%22%20border%3D%220%22%20style%3D%22background%3A%23fff%3B%22%3E%0D%0A%20%20%20%20%3C!--%20SALESFORCE%20MARKETING%20CLOUD%20IMAGE%20--%3E%0D%0A%20%20%20%20%3Ctr%3E%0D%0A%20%20%20%20%20%20%20%20%3Ctd%20bgcolor%3D%22%23FFFFFF%22%3E%0D%0A%20%20%20%20%20%20%20%20%3Ctable%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20border%3D%220%22%20width%3D%22100%25%22%20align%3D%22center%22%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctr%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ctd%20align%3D%22center%22%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ctable%20class%3D%22container%22%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20border%3D%220%22%20width%3D%22550%22%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ctr%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ctd%20align%3D%22center%22%3E%3Ca%20href%3D%22http%3A%2F%2Fwww.exacttarget.com%2F%22%20alias%3D%22Salesforce%20MC%22%20title%3D%22Salesforce%20MC%22%20target%3D%22_blank%22%20style%3D%22color%3A%23009DDC%3B%20text-decoration%3A%20none%3B%22%3E%3Cimg%20border%3D%220%22%20style%3D%22display%3Ablock%22%20src%3D%22http%3A%2F%2Fwww.exacttarget.com%2Fimages%2FPowered_By_1206.jpg%22%20alt%3D%22Salesforce%20MC%22%20name%3D%22Salesforce%20MC%22%20width%3D%22124%22%20height%3D%2256%22%3E%3C%2Fa%3E%3C%2Ftd%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Ftr%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Ftable%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Ftd%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Ftr%3E%0D%0A%20%20%20%20%20%20%20%20%3C%2Ftable%3E%0D%0A%20%20%20%20%20%20%20%20%3C%2Ftd%3E%0D%0A%20%20%20%20%3C%2Ftr%3E%20%20%20%20%0D%0A%20%20%20%20%3C!--%20FOOTER%20CONTENT%20--%3E%0D%0A%20%20%20%20%3Ctr%3E%0D%0A%20%20%20%20%20%20%20%20%3Ctd%20align%3D%22center%22%20valign%3D%22top%22%20style%3D%22background%3A%23fff%3B%22%20width%3D%22100%25%22%3E%0D%0A%20%20%20%20%20%20%20%20%3Ctable%20class%3D%22container%22%20cellpadding%3D%220%22%20cellspacing%3D%220%22%20width%3D%22600%22%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctr%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ctd%20align%3D%22center%22%20style%3D%22font-family%3A%20Verdana%2C%20Helvetica%2C%20Arial%2C%20sans-serif%3B%20font-size%3A%2011px%3B%20color%3A%20%23959595%3B%20padding%3A0px%200px%2025px%200px%3B%22%3E%0D%0A%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbr%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbr%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ca%20href%3D%22http%3A%2F%2Fwww.exacttarget.com%2Fprivacy-policy%22%20alias%3D%22Privacy%20Policy%22%20target%3D%22_blank%22%20style%3D%22font-size%3A12px%3B%20color%3A%20%23959595%3B%20text-decoration%3A%20none%3B%20font-weight%3Abold%3B%22%3EPrivacy%20Policy%3C%2Fa%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbr%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cbr%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Ca%20href%3D%22javascript%3Avoid(0)%3B%22%20alias%3D%22Update%20Profile%22%20target%3D%22_blank%22%20style%3D%22font-size%3A12px%3B%20color%3A%20%23959595%3B%20text-decoration%3A%20none%3B%20font-weight%3Abold%3B%22%3EUpdate%20Profile%3C%2Fa%3E%26nbsp%3B%26nbsp%3B%26nbsp%3B%26nbsp%3B%26nbsp%3B%26nbsp%3B%3Ca%20href%3D%22javascript%3Avoid(0)%3B%22%20alias%3D%22Manage%20Subscriptions%22%20target%3D%22_blank%22%20style%3D%22font-size%3A12px%3B%20color%3A%20%23959595%3B%20text-decoration%3A%20none%3B%20font-weight%3Abold%3B%22%3EManage%20Subscriptions%3C%2Fa%3E%26nbsp%3B%26nbsp%3B%26nbsp%3B%26nbsp%3B%26nbsp%3B%26nbsp%3B%3Ca%20href%3D%22javascript%3Avoid(0)%3B%22%20alias%3D%22Unsubscribe%22%20target%3D%22_blank%22%20style%3D%22font-size%3A12px%3B%20color%3A%20%23959595%3B%20text-decoration%3A%20none%3B%20font-weight%3Abold%3B%22%3EUnsubscribe%3C%2Fa%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Ftd%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Ftr%3E%0D%0A%20%20%20%20%20%20%20%20%3C%2Ftable%3E%0D%0A%20%20%20%20%20%20%20%20%3C%2Ftd%3E%0D%0A%20%20%20%20%3C%2Ftr%3E%20%0D%0A%3C%2Ftable%3E%0D%0A%3C%2Ftd%3E%3C%2Ftr%3E%3C%2Ftable%3E%3Cimg%20src%3D%22http%3A%2F%2Fcl.S7.exct.net%2Fopen.aspx%3Fffcb10-ffcf14-ffcf14-fe8713727c67027570-ffcf14-ffcf14-ffcf14%22%20width%3D%221%22%20height%3D%221%22%3E%3C%2Fbody%3E%3C%2Fhtml%3E"></iframe>
+        </div>
+        <div class="modal-footer">
+            <hr>
+            <div class="clearfix">
+                <div class="pull-xs-right">
+                    <button type="button" class="btn btn-secondary" ng-click="$ctrl.close()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" ng-click="$ctrl.close()">Ok</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<script type="text/ng-template" id="graph.html">
+    <div style="padding: 20px;">
+        <div id="graphContainer" style="overflow:hidden;position:relative;width:100%;height:200px;cursor:default;">
+            <div class="" ng-if="!$ctrl.data">
+                <div class="loading-indicator loading-center">
+                    <svg class="spinner-inner" viewbox="0 0 64 64">
+                        <circle class="spinner" r="25%" cx="50%" cy="50%"></circle>
+                    </svg>
+                    <svg class="spinner-outer" viewbox="0 0 64 64">
+                        <circle class="spinner" r="25%" cx="50%" cy="50%"></circle>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="journey.html">
+
+    <div class="clearfix journey-details hyphenate">
+
+        <button type="button" class="btn-secondary btn btn-sm float-xs-right" ui-sref="journeys">Back</button>
+        <h2 class="b-submodule-title">
+            Journey <span>{{vm.journey.name}}</span>
+
+            <div class="journey-details-title-desc">
+                Status: <span ng-bind="vm.journey.status" ng-class="{
+                'text-success': vm.journey.status == 'Published',
+                'text-danger': vm.journey.status == 'Stopped',
+                'text-warning': vm.journey.status == 'Draft'
+            }"></span>
+                /
+                Running since: <span ng-bind="vm.journey.createdDate | date"></span>
+            </div>
+        </h2>
+
+        <div class="journey-diagram">
+
+            <h2 >Journey Execution Summary</h2>
+
+            <svg id="the_svg" height="700" width="880" xmlns="http://www.w3.org/2000/svg" version="1.1" style="background-color: #ffffff"><g transform="translate(12,10)"><g><path class="link" d="M5,413.509376810243C73.41666666666667,413.509376810243 73.41666666666667,413.5761949847251 141.83333333333334,413.5761949847251" style="fill: none; stroke-width: 178; stroke: rgb(92, 5, 132); stroke-opacity: 0.4;"><title>Promotion E-mail → Interest Level
+                1,200</title></path><path class="link" d="M572.3333333333334,513.3230134391099C640.75,513.3230134391099 640.75,532.3765290132471 709.1666666666667,532.3765290132471" style="fill: none; stroke-width: 107.838; stroke: rgb(102, 0, 0); stroke-opacity: 0.4;"><title>E-mail Survey → Survey Response
+                727</title></path><path class="link" d="M430.5,494.4200263018181C498.9166666666667,494.4200263018181 498.9166666666667,513.3230134391099 567.3333333333334,513.3230134391099" style="fill: none; stroke-width: 107.838; stroke: rgb(175, 0, 0); stroke-opacity: 0.4;"><title>Wait 1 Days → E-mail Survey
+                727</title></path><path class="link" d="M288.6666666666667,507.5008519147237C357.08333333333337,507.5008519147237 357.08333333333337,494.4200263018181 425.5,494.4200263018181" style="fill: none; stroke-width: 107.838; stroke: rgb(247, 2, 2); stroke-opacity: 0.4;"><title>Not Interested → Wait 1 Days
+                727</title></path><path class="link" d="M146.83333333333334,448.65702831805845C215.25,448.65702831805845 215.25,507.5008519147237 283.6666666666667,507.5008519147237" style="fill: none; stroke-width: 107.838; stroke: rgb(247, 79, 79); stroke-opacity: 0.4;"><title>Interest Level → Not Interested
+                727</title></path><path class="link" d="M288.6666666666667,318.5008519147236C357.08333333333337,318.5008519147236 357.08333333333337,277.3229866102212 425.5,277.3229866102212" style="fill: none; stroke-width: 70.1617; stroke: rgb(113, 247, 153); stroke-opacity: 0.4;"><title>Interested → Wait 2 Days
+                473</title></path><path class="link" d="M430.5,277.3229866102212C498.9166666666667,277.3229866102212 498.9166666666667,236.03449555623527 567.3333333333334,236.03449555623527" style="fill: none; stroke-width: 70.1617; stroke: rgb(59, 249, 116); stroke-opacity: 0.4;"><title>Wait 2 Days → E-mail Contact Type
+                473</title></path><path class="link" d="M146.83333333333334,359.6570283180584C215.25,359.6570283180584 215.25,318.5008519147236 283.6666666666667,318.5008519147236" style="fill: none; stroke-width: 70.1617; stroke: rgb(157, 249, 185); stroke-opacity: 0.4;"><title>Interest Level → Interested
+                473</title></path><path class="link" d="M714.1666666666667,555.5906956799139C782.5833333333334,555.5906956799139 782.5833333333334,647.2950000000001 851,647.2950000000001" style="fill: none; stroke-width: 61.41; stroke: rgb(0, 0, 0); stroke-opacity: 0.4;"><title>Survey Response → Discard HCP
+                414</title></path><path class="link" d="M714.1666666666667,501.67152901324715C782.5833333333334,501.67152901324715 782.5833333333334,493.3758333333334 851,493.3758333333334" style="fill: none; stroke-width: 46.4283; stroke: rgb(51, 0, 0); stroke-opacity: 0.4;"><title>Survey Response → Thank you
+                313</title></path><path class="link" d="M572.3333333333334,217.19616222290193C711.6666666666667,217.19616222290193 711.6666666666667,16.24250000000007 851,16.24250000000007" style="fill: none; stroke-width: 32.485; stroke: rgb(0, 158, 47); stroke-opacity: 0.4;"><title>E-mail Contact Type → E-mail
+                219</title></path><path class="link" d="M572.3333333333334,255.9111622229019C711.6666666666667,255.9111622229019 711.6666666666667,254.95750000000004 851,254.95750000000004" style="fill: none; stroke-width: 24.7717; stroke: rgb(0, 158, 47); stroke-opacity: 0.4;"><title>E-mail Contact Type → Mail
+                167</title></path><path class="link" d="M572.3333333333334,238.48199555623526C711.6666666666667,238.48199555623526 711.6666666666667,137.5283333333334 851,137.5283333333334" style="fill: none; stroke-width: 10.0867; stroke: rgb(0, 255, 76); stroke-opacity: 0.4;"><title>E-mail Contact Type → Face-to- Face
+                68</title></path><path class="link" d="M714.1666666666667,297.7967997751645C782.5833333333334,297.7967997751645 782.5833333333334,368.75250000000005 851,368.75250000000005" style="fill: none; stroke-width: 2.81833; stroke: rgb(0, 0, 0); stroke-opacity: 0.4;"><title>No-Response → Send Reminder
+                19</title></path><path class="link" d="M572.3333333333334,269.706162222902C640.75,269.706162222902 640.75,297.7967997751645 709.1666666666667,297.7967997751645" style="fill: none; stroke-width: 2.81833; stroke: rgb(0, 0, 0); stroke-opacity: 0.4;"><title>E-mail Contact Type → No-Response
+                19</title></path></g><g><g class="node" transform="translate(0,324.509376810243)"><rect height="178" width="5" id="r0" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Promotion E-mail
+                1,200</title></rect><text x="11" y="89" dy=".35em" text-anchor="start" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Promotion E-mail: 1,200</text></g><g class="node" transform="translate(141.83333333333334,324.5761949847251)"><rect height="178" width="5" id="r1" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Interest Level
+                1,200</title></rect><text x="11" y="105" dy=".35em" text-anchor="start" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Interest Level: 1,200</text></g><g class="node" transform="translate(283.6666666666667,283.4200185813903)"><rect height="70.16166666666668" width="5" id="r2" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Interested
+                473</title></rect><text x="11" y="35.08083333333334" dy=".35em" text-anchor="start" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Interested: 473</text></g><g class="node" transform="translate(425.5,242.24215327688788)"><rect height="70.16166666666668" width="5" id="r3" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Wait 2 Days
+                473</title></rect><text x="-6" y="35.08083333333334" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Wait 2 Days: 473</text></g><g class="node" transform="translate(567.3333333333334,200.95366222290193)"><rect height="70.16166666666668" width="5" id="r4" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>E-mail Contact Type
+                473</title></rect><text x="-6" y="35.08083333333334" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">E-mail Contact Type: 473</text></g><g class="node" transform="translate(851,7.105427357601002e-14)"><rect height="32.485" width="5" id="r5" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>E-mail
+                219</title></rect><text x="-6" y="16.2425" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">E-mail: 219</text></g><g class="node" transform="translate(851,132.48500000000007)"><rect height="10.086666666666668" width="5" id="r6" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Face-to- Face
+                68</title></rect><text x="-6" y="5.043333333333334" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Face-to- Face: 68</text></g><g class="node" transform="translate(851,242.57166666666672)"><rect height="24.77166666666667" width="5" id="r7" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Mail
+                167</title></rect><text x="-6" y="12.385833333333334" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Mail: 167</text></g><g class="node" transform="translate(709.1666666666667,296.3876331084978)"><rect height="2.8183333333333334" width="5" id="r8" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>No-Response
+                19</title></rect><text x="-6" y="1.4091666666666667" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">No-Response: 19</text></g><g class="node" transform="translate(851,367.34333333333336)"><rect height="2.8183333333333334" width="5" id="r9" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Send Reminder
+                19</title></rect><text x="-6" y="1.4091666666666667" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Send Reminder: 19</text></g><g class="node" transform="translate(283.6666666666667,453.581685248057)"><rect height="107.83833333333334" width="5" id="r10" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Not Interested
+                727</title></rect><text x="11" y="53.91916666666667" dy=".35em" text-anchor="start" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Not Interested: 727</text></g><g class="node" transform="translate(425.5,440.5008596351514)"><rect height="107.83833333333334" width="5" id="r11" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Wait 1 Days
+                727</title></rect><text x="-6" y="53.91916666666667" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Wait 1 Days: 727</text></g><g class="node" transform="translate(567.3333333333334,459.4038467724432)"><rect height="107.83833333333334" width="5" id="r12" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>E-mail Survey
+                727</title></rect><text x="-6" y="53.91916666666667" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">E-mail Survey: 727</text></g><g class="node" transform="translate(709.1666666666667,478.4573623465805)"><rect height="107.83833333333334" width="5" id="r13" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Survey Response
+                727</title></rect><text x="-6" y="53.91916666666667" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Survey Response: 727</text></g><g class="node" transform="translate(851,470.16166666666675)"><rect height="46.428333333333335" width="5" id="r14" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Thank you
+                313</title></rect><text x="-6" y="23.214166666666667" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Thank you: 313</text></g><g class="node" transform="translate(851,616.59)"><rect height="61.410000000000004" width="5" id="r15" shape-rendering="crispEdges" style="fill: rgb(110, 110, 110); fill-opacity: 0.9; stroke-width: 0; stroke: rgb(0, 0, 0);"><title>Discard HCP
+                414</title></rect><text x="-6" y="30.705000000000002" dy=".35em" text-anchor="end" style="stroke-width: 0; font-family: sans-serif; font-size: 15px; font-weight: 100; fill: rgb(33, 33, 33);">Discard HCP: 414</text></g></g></g></svg>
+
+
+
+        </div>
+        <div class="journey-diagram">
+            <graph journey="vm.journey"></graph>
+        </div>
+
+        <div class="row journey-row">
+            <div class="col-md-4">
+                <div class="card card-style-list">
+                    <div class="card-header card-header--small">
+                        <div class="card-title text-xs-center">Completion Rate</div>
+                    </div>
+                    <div class="card-block">
+                        <img src="assets/mxClient/images/diagram-completion-rate.png" alt="" class="img-fluid img-center">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-style-list">
+                    <div class="card-header card-header--small">
+                        <div class="card-title">Success Rate</div>
+                    </div>
+                    <div class="card-block card-block-digit">
+                        <div class="card-style-list-digit">
+                            <div class="card-style-list-digit-hold">
+                                23<small>%</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-style-list">
+                    <div class="card-header card-header--small">
+                        <div class="card-title">Email Interaction</div>
+                    </div>
+                    <div class="card-block">
+                        <img src="assets/mxClient/images/diagram-email-interaction.png" alt="" class="img-fluid img-center">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row ">
+            <div class="col-md-4">
+                <div class="card card-style-list">
+                    <div class="card-header">
+                        <div class="card-title">HCPs</div>
+                    </div>
+                    <div class="card-block">
+                        <ul class="journey-list">
+                            <li class="journey-list-item" ng-repeat="item in vm.journeyMembers track by $index">
+                                <a href ui-sref="main.dashboard.accounts.hcp({id: item.referenceId})" class="journey-list-title">{{item.firstName}} {{item.lastName}}</a>
+                                <div class="journey-list-desc">{{item.title}}</div>
+                            </li>
+                        </ul>
+                        <div class="" ng-if="!vm.journeyMembers">
+                            <div class="loading-indicator loading-center">
+                                <svg class="spinner-inner" viewbox="0 0 64 64">
+                                    <circle class="spinner" r="25%" cx="50%" cy="50%"></circle>
+                                </svg>
+                                <svg class="spinner-outer" viewbox="0 0 64 64">
+                                    <circle class="spinner" r="25%" cx="50%" cy="50%"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary" ui-sref="main.dashboard.journeys.item.addHcr({id: vm.id})" ng-disabled="!vm.journeyMembers">Add</button>
+                        <button class="btn btn-secondary" ng-disabled="!vm.journeyMembers">View All</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-style-list">
+                    <div class="card-header">
+                        <div class="card-title">Segment</div>
+                    </div>
+                    <div class="card-block">
+                        <div class="form-label">
+                            Deciles: 5-10
+                        </div>
+                        <div class="form-label">
+                            Sensitive to: Drug Safety
+                        </div>
+                        <div class="form-label">
+                            Product: Glidim
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-style-list">
+                    <div class="card-header">
+                        <div class="card-title">Marketing Summary</div>
+                    </div>
+                    <div class="card-block">
+                        {{vm.journey.description}}
+                        <div class="" ng-if="!vm.journey.showDescription">
+                            <div class="loading-indicator loading-center">
+                                <svg class="spinner-inner" viewbox="0 0 64 64">
+                                    <circle class="spinner" r="25%" cx="50%" cy="50%"></circle>
+                                </svg>
+                                <svg class="spinner-outer" viewbox="0 0 64 64">
+                                    <circle class="spinner" r="25%" cx="50%" cy="50%"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</script>
+<script type="text/ng-template" id="journeys.html">
+    <h2 class="b-submodule-title">Journeys</h2>
+
+    <div class="diagram-frame card" style="display: block; text-align: center;">
+        <img src="assets/mxClient/images/graph.png" alt="">
+    </div>
+    <div class="b-journeys-filters">
+        <label class="control-label font-weight-bold">Filters</label>
+        <div class="row">
+            <div class="col-md-6">
+                <label class="control-label font-weight-bold">Attribute(s)</label>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <select class="form-control" ng-model="vm.filters.filter2.key" >
+                                <option value="specialty" ng-selected="true">HCP Specialty</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-5">
+                            <select class="form-control" ng-model="vm.filters.filter2.value" >
+                                <option value="cardiologist" ng-selected="true" >Cardiologist</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <select class="form-control" ng-model="vm.filters.filter3.key" >
+                                <option value="segmentation" ng-selected="true">HCP Segmentation</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-5">
+                            <select class="form-control" ng-model="vm.filters.filter3.value" >
+                                <option value="Decile" ng-selected="true">Decile</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="vm.addedFilter >= 1">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <select class="form-control" ng-model="vm.filters.filter1.key" >
+                                <option value="journey-state" ng-selected="true">Select Journey State</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-5">
+                            <select class="form-control" ng-model="vm.filters.filter1.value" ng-change="vm.changeDiagram(true)" >
+                                <option value="All" ng-selected="true">All</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Ongoing">Ongoing</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="form-group" ng-if="vm.addedFilter >= 2">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <select class="form-control" ng-model="vm.filters.filter4.key" >
+                                <option value="segmentation" ng-selected="true">Age</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-5">
+                            <select class="form-control" ng-model="vm.filters.filter4.value" ng-change="vm.changeDiagram(true)">
+                                <option value="all" ng-selected="true">All</option>
+                                <option value="35">&lt; 35</option>
+                                <option value="35-50">35 &lt;= Age &lt; 50</option>
+                                <option value="50">&gt;= 50</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group"  ng-if="vm.addedFilter < 2">
+                    <button type="button" ng-click="vm.addedFilter = vm.addedFilter + 1" class="btn btn-primary">
+                        <span class="icon icon-plus"></span>
+                        Add Filter
+                    </button>
+                </div>
+
+            </div>
+            <div class="col-md-6">
+                <label class="control-label font-weight-bold">Outcome</label>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <label class="control-label">Actual Outcomes</label>
+                        </div>
+                        <div class="col-xs-6">
+                            <select class="form-control" ng-model="vm.filters.outcome2.value" ng-change="vm.changeDiagram()">
+                                <option value="" >Please choose</option>
+                                <option value="all" >Sales Low, Medium, High</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <label class="control-label">Predicted Outcomes</label>
+                        </div>
+                        <div class="col-xs-6">
+                            <select class="form-control" ng-model="vm.filters.outcome1.value" ng-change="vm.changeDiagram()">
+                                <option value="" >Please choose</option>
+                                <option value="all" >Sales Low, Medium, High</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="journeys-stats journey-details">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-style-list">
+                    <div class="card-header">
+                        <div class="card-title text-xs-center">Journeys</div>
+                    </div>
+                    <div class="card-block">
+
+                        <div class="row">
+                            <div class="col-xs-4 text-xs-center">
+                                <div class="journeys-stats-title">Active</div>
+                                <div class="journeys-stats-score text-primary ">{{vm.jDetailsObj.active}}</div>
+                            </div>
+                            <div class="col-xs-4 text-xs-center">
+                                <div class="journeys-stats-title">Complete</div>
+                                <div class="journeys-stats-score text-primary ">{{vm.jDetailsObj.complete}}</div>
+                            </div>
+                            <div class="col-xs-4 text-xs-center">
+                                <div class="journeys-stats-title">Success</div>
+                                <div class="journeys-stats-score" ng-class="{'text-success': vm.jDetailsObj.successState, 'text-danger': !vm.jDetailsObj.successState}">
+                                    {{vm.jDetailsObj.success}}%
+                                    <span class="icon" ng-class="{'icon-chevron-up': vm.jDetailsObj.successState, 'icon-chevron-down': !vm.jDetailsObj.successState}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card card-style-list">
+                    <div class="card-header">
+                        <div class="card-title text-xs-center">Emails</div>
+                    </div>
+                    <div class="card-block">
+
+                        <div class="row">
+                            <div class="col-xs-4 text-xs-center">
+                                <div class="journeys-stats-title">Opened</div>
+                                <div class="journeys-stats-score" ng-class="{'text-success': vm.jDetailsObj.openedState, 'text-warning': !vm.jDetailsObj.openedState}">
+                                    {{vm.jDetailsObj.opened}}%
+                                    <span class="icon" ng-class="{'icon-chevron-up': vm.jDetailsObj.openedState, 'icon-chevron-down': !vm.jDetailsObj.openedState}"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-4 text-xs-center">
+                                <div class="journeys-stats-title">Unsubscribed</div>
+                                <div class="journeys-stats-score" ng-class="{
+                                    'text-success': !vm.jDetailsObj.unsubscribedState,
+                                    'text-warning': vm.jDetailsObj.unsubscribedState}">
+                                    {{vm.jDetailsObj.unsubscribed}}%
+                                    <span class="icon" ng-class="{
+                                        'icon-chevron-up': vm.jDetailsObj.unsubscribedState,
+                                        'icon-chevron-down': !vm.jDetailsObj.unsubscribedState}"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-4 text-xs-center">
+                                <div class="journeys-stats-title">Bounced</div>
+                                <div class="journeys-stats-score" ng-class="{'text-success': !vm.jDetailsObj.bouncedState, 'text-warning': vm.jDetailsObj.bouncedState}">
+                                    {{vm.jDetailsObj.bounced}}%
+                                    <span class="icon" ng-class="{'icon-chevron-up': vm.jDetailsObj.bouncedState, 'icon-chevron-down': !vm.jDetailsObj.bouncedState}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <table ng-class="{'table-hover': !vm.showSpinner}" class="table table-base journeys-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Running Since</th>
+            <th>Description</th>
+            <th># of HCPs</th>
+            <th>Completed</th>
+            <th>Unsubscribed</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-if="vm.showSpinner">
+            <td colspan="7">
+                <div class="loading-indicator loading-center">
+                    <svg class="spinner-inner" viewbox="0 0 64 64">
+                        <circle class="spinner" r="25%" cx="50%" cy="50%"></circle>
+                    </svg>
+                    <svg class="spinner-outer" viewbox="0 0 64 64">
+                        <circle class="spinner" r="25%" cx="50%" cy="50%"></circle>
+                    </svg>
+                </div>
+            </td>
+        </tr>
+        <tr ng-repeat="journey in vm.journeys() | filter:vm.query track by $index" ng-if="!vm.showSpinner">
+            <td>
+                <div class="journey">
+                    <div class="journey-data">
+                        <a class="title" ng-bind="journey.name" ui-sref="journeys.item({id: journey.id})"></a>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <span ng-bind="journey.status"></span>
+            </td>
+            <td>
+                <span ng-bind="journey.createdDate | date : 'dd MMM yyyy' "></span>
+            </td>
+            <td>
+                <span ng-bind="journey.description"></span>
+            </td>
+            <td>
+                <span ng-bind="journey.numberOfHcp"></span>
+            </td>
+            <td>
+                <span ng-bind="journey.completed"></span>
+            </td>
+            <td>
+                <span ng-bind="journey.unsubscribed"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+<!-- endinject -->
+</body>
+</html>
